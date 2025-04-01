@@ -33,18 +33,23 @@
         @foreach (Model.PostModel item in Model.Posts)
         {
             <div class="post-content">
-                <img src="@item.PostPic" alt="post-image" class="img-responsive post-image">
+                @if (item.PostPic != null)
+                {
+                    <img src="@item.PostPic" alt="post-image" class="img-responsive post-image">
+                }
                 <div class="post-container">
                     <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="user" class="profile-photo-md pull-left">
                     <div class="post-detail">
                         <div class="user-info">
-                            <h5><a href="timeline.html" class="profile-link">@Model.GetEmailForPost(item.UserId)</a> <span class="following">following</span></h5>
+                            <h5><a href="timeline.html" class="profile-link" style="text-decoration: none;">@Model.GetEmailForPost(item.UserId)</a> <span class="following">following</span></h5>
                             <p class="text-muted">Published a photo on @item.PostDate.ToString()</p>
                         </div>
-                        <div class="reaction">
-                            <a class="btn text-green"><i class="fa fa-thumbs-up"></i>@item.LikeQuantity</a>
-                            <a class="btn text-red"><i class="fa fa-thumbs-down"></i> 0</a>
-                        </div>
+                        <form method="post" asp-page-handler="Like">
+                            <div class="reaction">
+                                <input asp-for="PostId" type="hidden" value="@item.Id" />
+                                <button type="submit" class="btn text-green"><i class="fa fa-thumbs-up"></i>@item.LikeQuantity</button>
+                            </div>
+                        </form>
                         <div class="line-divider"></div>
                         <div class="post-text">
                             <p><i class="em em-anguished">@item.PostTxt</i> <i class="em em-anguished"></i> <i class="em em-anguished"></i></p>
@@ -54,7 +59,7 @@
                         {
                             <div class="post-comment">
                                 <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="" class="profile-photo-sm">
-                                <p><a href="timeline.html" class="profile-link">@Model.GetEmailForPost(tuple.Item2)</a><i class="em em-laughing"></i> @tuple.Item1</p>
+                                <p><a href="timeline.html" class="profile-link" style="text-decoration: none;">@Model.GetEmailForPost(tuple.Item2)</a><i class="em em-laughing"></i> @tuple.Item1</p>
                             </div>
                         }
                         <form method="post" asp-page-handler="Comment">

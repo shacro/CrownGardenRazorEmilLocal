@@ -73,8 +73,7 @@ namespace CrownGardenRazorEmilLocal.Pages
                     IsLiked = false,
                     LikeQuantity = 0,
                     CategoryId = 1,
-                    UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id,
-                    ProfileLink = "hej"
+                    UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id
                 };
 
                 _appDbContext.Posts.Add(post);
@@ -82,7 +81,7 @@ namespace CrownGardenRazorEmilLocal.Pages
 
                 SetPosts();
             }
-            else if (PostText != "")
+            else if (PostText != "" && PostText != null)
             {
                 PostModel post = new PostModel
                 {
@@ -91,8 +90,7 @@ namespace CrownGardenRazorEmilLocal.Pages
                     IsLiked = false,
                     LikeQuantity = 0,
                     CategoryId = 1,
-                    UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id,
-                    ProfileLink = ""
+                    UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id
                 };
 
                 _appDbContext.Posts.Add(post);
@@ -101,7 +99,19 @@ namespace CrownGardenRazorEmilLocal.Pages
                 SetPosts();
             }
 
-            return Page();
+            return RedirectToPage();
+        }
+
+        public IActionResult OnPostLike()
+        {
+            if (User.Identity.Name == null)
+            {
+                return RedirectToPage();
+            }
+
+
+
+            return RedirectToPage();
         }
 
         public IActionResult OnPostComment()

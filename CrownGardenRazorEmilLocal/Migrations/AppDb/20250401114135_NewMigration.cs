@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CrownGardenRazorEmilLocal.Migrations.AppDb
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class NewMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -127,9 +127,9 @@ namespace CrownGardenRazorEmilLocal.Migrations.AppDb
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProfileLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PostTxt = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PostPic = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProfileLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PostTxt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PostPic = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsLiked = table.Column<bool>(type: "bit", nullable: false),
                     LikeQuantity = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),

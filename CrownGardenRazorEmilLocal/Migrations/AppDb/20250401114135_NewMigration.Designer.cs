@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrownGardenRazorEmilLocal.Migrations.AppDb
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250331123524_Initial")]
-    partial class Initial
+    [Migration("20250401114135_NewMigration")]
+    partial class NewMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -249,15 +249,12 @@ namespace CrownGardenRazorEmilLocal.Migrations.AppDb
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PostPic")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostTxt")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProfileLink")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")

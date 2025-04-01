@@ -246,15 +246,12 @@ namespace CrownGardenRazorEmilLocal.Migrations.AppDb
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PostPic")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostTxt")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProfileLink")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
