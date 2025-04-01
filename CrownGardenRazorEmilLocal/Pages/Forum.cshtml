@@ -47,7 +47,14 @@
                         <form method="post" asp-page-handler="Like">
                             <div class="reaction">
                                 <input asp-for="PostId" type="hidden" value="@item.Id" />
-                                <button type="submit" class="btn text-green"><i class="fa fa-thumbs-up"></i>@item.LikeQuantity</button>
+                                @if (Model.HasLikedPost(item.Id))
+                                {
+                                    <button type="submit" class="btn text-green"><i class="fa fa-thumbs-up"></i>@item.LikeQuantity</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn text-red"><i class="fa fa-thumbs-up"></i>@item.LikeQuantity</button>
+                                }
                             </div>
                         </form>
                         <div class="line-divider"></div>

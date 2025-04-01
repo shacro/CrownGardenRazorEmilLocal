@@ -109,7 +109,7 @@ namespace CrownGardenRazorEmilLocal.Pages
 
             string loggedInUserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id;
 
-            PostLikeModel? postLikeModel = _appDbContext.PostLikes.FirstOrDefault(postLike => postLike.UserId == loggedInUserId); // ändra den sen
+            PostLikeModel? postLikeModel = _appDbContext.PostLikes.FirstOrDefault(postLike => (postLike.UserId == loggedInUserId) && (postLike.PostId == PostId));
 
             if (postLikeModel == null)
             {
@@ -149,6 +149,13 @@ namespace CrownGardenRazorEmilLocal.Pages
         {
             PostModel post = _appDbContext.Posts.FirstOrDefault(post => post.Id == PostId);
             post.LikeQuantity++;
+        }
+
+        public bool HasLikedPost(int postId)
+        {
+            string loggedInUserId = User.Identity.Name != null ? _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id : "-1";
+
+            return _appDbContext.PostLikes.FirstOrDefault(postlike => (postlike.PostId == postId) && (postlike.UserId == loggedInUserId))?.HasLiked ?? false;
         }
 
         public IActionResult OnPostComment()
