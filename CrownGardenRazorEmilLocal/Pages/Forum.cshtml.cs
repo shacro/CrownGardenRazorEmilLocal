@@ -13,7 +13,7 @@ namespace CrownGardenRazorEmilLocal.Pages
         public List<PostModel> Posts { get; set; }
 
         [BindProperty]
-        public string PostText { get; set; }
+        public string PostText { get; set; } = "";
 
         [BindProperty]
         public List<IFormFile> PostPictures { get; set; }
@@ -61,27 +61,45 @@ namespace CrownGardenRazorEmilLocal.Pages
                 return Page();
             }
 
-            if (PostPictures != null)
+            if (PostPictures != null && PostPictures.Count != 0)
             {
                 await UploadPostImage();
+
+                PostModel post = new PostModel
+                {
+                    PostPic = $"Images/{Path.GetFileName(PostPictures[PostPictures.Count - 1].FileName)}",
+                    PostTxt = this.PostText,
+                    PostDate = DateTime.Now,
+                    IsLiked = false,
+                    LikeQuantity = 0,
+                    CategoryId = 1,
+                    UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id,
+                    ProfileLink = "hej"
+                };
+
+                _appDbContext.Posts.Add(post);
+                _appDbContext.SaveChanges();
+
+                SetPosts();
             }
-
-            PostModel post = new PostModel
+            else if (PostText != "")
             {
-                PostPic = $"Images/{Path.GetFileName(PostPictures[PostPictures.Count - 1].FileName)}",
-                PostTxt = this.PostText,
-                PostDate = DateTime.Now,
-                IsLiked = false,
-                LikeQuantity = 0,
-                CategoryId = 1,
-                UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id,
-                ProfileLink = "hej"
-            };
+                PostModel post = new PostModel
+                {
+                    PostTxt = this.PostText,
+                    PostDate = DateTime.Now,
+                    IsLiked = false,
+                    LikeQuantity = 0,
+                    CategoryId = 1,
+                    UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id,
+                    ProfileLink = ""
+                };
 
-            _appDbContext.Posts.Add(post);
-            _appDbContext.SaveChanges();
+                _appDbContext.Posts.Add(post);
+                _appDbContext.SaveChanges();
 
-            SetPosts();
+                SetPosts();
+            }
 
             return Page();
         }
