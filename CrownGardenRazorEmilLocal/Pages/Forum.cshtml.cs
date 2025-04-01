@@ -11,6 +11,18 @@ namespace CrownGardenRazorEmilLocal.Pages
         private readonly AppDbContext _appDbContext;
         private readonly IdentityUserContext _indentityContext;
         public List<PostModel> Posts { get; set; }
+
+        [BindProperty]
+        public string PostText { get; set; }
+
+        [BindProperty]
+        public List<IFormFile> PostPictures { get; set; }
+
+        [BindProperty]
+        public string CommentText { get; set; }
+
+        [BindProperty]
+        public int PostId { get; set; }
         public ForumModel(AppDbContext appDbContext, IdentityUserContext indentityContext)
         {
             _appDbContext = appDbContext;
@@ -18,7 +30,7 @@ namespace CrownGardenRazorEmilLocal.Pages
         }
         public void OnGet()
         {
-            Posts = _appDbContext.Posts.ToList();
+            SetPosts();
         }
         public List<(string, string)> GetCommentsForPost(PostModel post)
         {
@@ -33,6 +45,85 @@ namespace CrownGardenRazorEmilLocal.Pages
             }
 
             return output;
+        }
+
+        private void SetPosts()
+        {
+            Posts = _appDbContext.Posts.ToList();
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            SetPosts();
+
+            if (User.Identity.Name == null)
+            {
+                return Page();
+            }
+
+            if (PostPictures != null)
+            {
+                await UploadPostImage();
+            }
+
+            PostModel post = new PostModel
+            {
+                PostPic = $"Images/{Path.GetFileName(PostPictures[PostPictures.Count - 1].FileName)}",
+                PostTxt = this.PostText,
+                PostDate = DateTime.Now,
+                IsLiked = false,
+                LikeQuantity = 0,
+                CategoryId = 1,
+                UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id,
+                ProfileLink = "hej"
+            };
+
+            _appDbContext.Posts.Add(post);
+            _appDbContext.SaveChanges();
+
+            SetPosts();
+
+            return Page();
+        }
+
+        public IActionResult OnPostComment()
+        {
+
+            if (User.Identity.Name == null)
+            {
+                return RedirectToPage();
+            }
+
+            if (CommentText == null || CommentText == "")
+            {
+                return RedirectToPage();
+            }
+
+            CommentModel comment = new CommentModel { Comment = CommentText, CommentPostDate = DateTime.Now, UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id };
+            _appDbContext.Comments.Add(comment);
+            _appDbContext.SaveChanges();
+
+            PostCommentLinkModel postCommentLink = new PostCommentLinkModel { PostId = this.PostId, CommentId = comment.Id, };
+            _appDbContext.PostCommentLinks.Add(postCommentLink);
+            _appDbContext.SaveChanges();
+
+            CommentText = "";
+
+            SetPosts();
+
+            return RedirectToPage(); // för att tömma commentar fältet efter post
+        }
+
+        private async Task UploadPostImage()
+        {
+            string imageFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images");
+            string fileName = Path.GetFileName(PostPictures[PostPictures.Count - 1].FileName);
+            var filePath = Path.Combine(imageFolder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await PostPictures[PostPictures.Count - 1].CopyToAsync(stream);
+            }
         }
 
         public string GetEmailForPost(string UserId)
