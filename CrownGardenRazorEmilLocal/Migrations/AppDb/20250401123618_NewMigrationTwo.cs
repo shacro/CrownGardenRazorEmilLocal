@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CrownGardenRazorEmilLocal.Migrations.AppDb
 {
     /// <inheritdoc />
-    public partial class NewMigration : Migration
+    public partial class NewMigrationTwo : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -121,6 +121,21 @@ namespace CrownGardenRazorEmilLocal.Migrations.AppDb
                 });
 
             migrationBuilder.CreateTable(
+                name: "PostLikes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HasLiked = table.Column<bool>(type: "bit", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostLikes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
                 {
@@ -130,7 +145,6 @@ namespace CrownGardenRazorEmilLocal.Migrations.AppDb
                     ProfileLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PostTxt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PostPic = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsLiked = table.Column<bool>(type: "bit", nullable: false),
                     LikeQuantity = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     PostDate = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -264,6 +278,9 @@ namespace CrownGardenRazorEmilLocal.Migrations.AppDb
 
             migrationBuilder.DropTable(
                 name: "PostCommentLinks");
+
+            migrationBuilder.DropTable(
+                name: "PostLikes");
 
             migrationBuilder.DropTable(
                 name: "Posts");

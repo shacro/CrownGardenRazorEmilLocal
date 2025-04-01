@@ -70,7 +70,6 @@ namespace CrownGardenRazorEmilLocal.Pages
                     PostPic = $"Images/{Path.GetFileName(PostPictures[PostPictures.Count - 1].FileName)}",
                     PostTxt = this.PostText,
                     PostDate = DateTime.Now,
-                    IsLiked = false,
                     LikeQuantity = 0,
                     CategoryId = 1,
                     UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id
@@ -87,7 +86,6 @@ namespace CrownGardenRazorEmilLocal.Pages
                 {
                     PostTxt = this.PostText,
                     PostDate = DateTime.Now,
-                    IsLiked = false,
                     LikeQuantity = 0,
                     CategoryId = 1,
                     UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id
@@ -109,9 +107,48 @@ namespace CrownGardenRazorEmilLocal.Pages
                 return RedirectToPage();
             }
 
+            string loggedInUserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id;
 
+            PostLikeModel? postLikeModel = _appDbContext.PostLikes.FirstOrDefault(postLike => postLike.UserId == loggedInUserId); // ändra den sen
+
+            if (postLikeModel == null)
+            {
+                AddLikesNewToPost();
+            }
+            else if (postLikeModel.HasLiked == false)
+            {
+                postLikeModel.HasLiked = true;
+                AddLikeToPost();
+            }
+            else
+            {
+                RemoveLikesFromPost();
+                postLikeModel.HasLiked = false;
+            }
+
+            _appDbContext.SaveChanges();
 
             return RedirectToPage();
+        }
+
+        private void RemoveLikesFromPost()
+        {
+            PostModel postmodel = _appDbContext.Posts.FirstOrDefault(post => post.Id == PostId);
+            postmodel.LikeQuantity--;
+        }
+
+        private void AddLikesNewToPost()
+        {
+            PostLikeModel postlikeModel = new PostLikeModel { HasLiked = true, PostId = this.PostId, UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id };
+            PostModel postmodel = _appDbContext.Posts.FirstOrDefault(post => post.Id == PostId);
+            postmodel.LikeQuantity++;
+            _appDbContext.PostLikes.Add(postlikeModel);
+        }
+
+        private void AddLikeToPost()
+        {
+            PostModel post = _appDbContext.Posts.FirstOrDefault(post => post.Id == PostId);
+            post.LikeQuantity++;
         }
 
         public IActionResult OnPostComment()

@@ -9,7 +9,6 @@ namespace CrownGardenRazorEmilLocal.Datas
         {
 
         }
-
         public DbSet<Product> Products { get; set; }
         public DbSet<BlogPost> BlogPosts { get; set; }
         public DbSet<Booking> Bookings { get; set; }
@@ -22,5 +21,6 @@ namespace CrownGardenRazorEmilLocal.Datas
         public DbSet<PostModel> Posts { get; set; }
         public DbSet<CommentModel> Comments { get; set; }
         public DbSet<PostCommentLinkModel> PostCommentLinks { get; set; }
+        public DbSet<PostLikeModel> PostLikes { get; set; }
     }
 }

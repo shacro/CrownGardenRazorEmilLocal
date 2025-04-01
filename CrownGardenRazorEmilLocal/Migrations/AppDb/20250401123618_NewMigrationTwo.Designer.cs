@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrownGardenRazorEmilLocal.Migrations.AppDb
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250401114135_NewMigration")]
-    partial class NewMigration
+    [Migration("20250401123618_NewMigrationTwo")]
+    partial class NewMigrationTwo
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -228,6 +228,29 @@ namespace CrownGardenRazorEmilLocal.Migrations.AppDb
                     b.ToTable("PostCommentLinks");
                 });
 
+            modelBuilder.Entity("CrownGardenRazorEmilLocal.Model.PostLikeModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool?>("HasLiked")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PostLikes");
+                });
+
             modelBuilder.Entity("CrownGardenRazorEmilLocal.Model.PostModel", b =>
                 {
                     b.Property<int>("Id")
@@ -238,9 +261,6 @@ namespace CrownGardenRazorEmilLocal.Migrations.AppDb
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsLiked")
-                        .HasColumnType("bit");
 
                     b.Property<int>("LikeQuantity")
                         .HasColumnType("int");
