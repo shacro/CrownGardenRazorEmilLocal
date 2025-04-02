@@ -72,7 +72,7 @@ namespace CrownGardenRazorEmilLocal.Pages
                     PostDate = DateTime.Now,
                     LikeQuantity = 0,
                     CategoryId = 1,
-                    UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id
+                    UserId = GetSessionUserId()
                 };
 
                 _appDbContext.Posts.Add(post);
@@ -88,7 +88,7 @@ namespace CrownGardenRazorEmilLocal.Pages
                     PostDate = DateTime.Now,
                     LikeQuantity = 0,
                     CategoryId = 1,
-                    UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id
+                    UserId = GetSessionUserId()
                 };
 
                 _appDbContext.Posts.Add(post);
@@ -99,7 +99,10 @@ namespace CrownGardenRazorEmilLocal.Pages
 
             return RedirectToPage();
         }
-
+        public string GetSessionUserId()
+        {
+            return _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name)?.Id ?? "-1";
+        }
         public IActionResult OnPostLike()
         {
             if (User.Identity.Name == null)
@@ -107,7 +110,7 @@ namespace CrownGardenRazorEmilLocal.Pages
                 return RedirectToPage();
             }
 
-            string loggedInUserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id;
+            string loggedInUserId = GetSessionUserId();;
 
             PostLikeModel? postLikeModel = _appDbContext.PostLikes.FirstOrDefault(postLike => (postLike.UserId == loggedInUserId) && (postLike.PostId == PostId));
 
@@ -130,16 +133,24 @@ namespace CrownGardenRazorEmilLocal.Pages
 
             return RedirectToPage();
         }
-
         private void RemoveLikesFromPost()
         {
             PostModel postmodel = _appDbContext.Posts.FirstOrDefault(post => post.Id == PostId);
             postmodel.LikeQuantity--;
         }
 
+        public string GetProfilePicture(string userId)
+        {
+            if (userId == "-1")
+            {
+                return "ProfilePictures/DefaultProfileImage.png";
+            }
+            return _indentityContext.Users.FirstOrDefault(user => user.Id == userId).ProfilePicture;
+        }
+
         private void AddLikesNewToPost()
         {
-            PostLikeModel postlikeModel = new PostLikeModel { HasLiked = true, PostId = this.PostId, UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id };
+            PostLikeModel postlikeModel = new PostLikeModel { HasLiked = true, PostId = this.PostId, UserId = GetSessionUserId() };
             PostModel postmodel = _appDbContext.Posts.FirstOrDefault(post => post.Id == PostId);
             postmodel.LikeQuantity++;
             _appDbContext.PostLikes.Add(postlikeModel);
@@ -153,7 +164,7 @@ namespace CrownGardenRazorEmilLocal.Pages
 
         public bool HasLikedPost(int postId)
         {
-            string loggedInUserId = User.Identity.Name != null ? _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id : "-1";
+            string loggedInUserId = User.Identity.Name != null ? GetSessionUserId() : "-1";
 
             return _appDbContext.PostLikes.FirstOrDefault(postlike => (postlike.PostId == postId) && (postlike.UserId == loggedInUserId))?.HasLiked ?? false;
         }
@@ -171,7 +182,7 @@ namespace CrownGardenRazorEmilLocal.Pages
                 return RedirectToPage();
             }
 
-            CommentModel comment = new CommentModel { Comment = CommentText, CommentPostDate = DateTime.Now, UserId = _indentityContext.Users.FirstOrDefault(user => user.Email == User.Identity.Name).Id };
+            CommentModel comment = new CommentModel { Comment = CommentText, CommentPostDate = DateTime.Now, UserId = GetSessionUserId() };
             _appDbContext.Comments.Add(comment);
             _appDbContext.SaveChanges();
 
@@ -197,7 +208,6 @@ namespace CrownGardenRazorEmilLocal.Pages
                 await PostPictures[PostPictures.Count - 1].CopyToAsync(stream);
             }
         }
-
         public string GetEmailForPost(string UserId)
         {
             return _indentityContext.Users.FirstOrDefault(user => user.Id == UserId).Email;

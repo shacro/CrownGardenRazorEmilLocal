@@ -38,7 +38,7 @@
                     <img src="@item.PostPic" alt="post-image" class="img-responsive post-image">
                 }
                 <div class="post-container">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="user" class="profile-photo-md pull-left">
+                    <img src="@Model.GetProfilePicture(item.UserId)" alt="user" class="profile-photo-md pull-left">
                     <div class="post-detail">
                         <div class="user-info">
                             <h5><a href="timeline.html" class="profile-link" style="text-decoration: none;">@Model.GetEmailForPost(item.UserId)</a> <span class="following">following</span></h5>
@@ -65,13 +65,13 @@
                         @foreach ((string, string) tuple in Model.GetCommentsForPost(item))
                         {
                             <div class="post-comment">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="" class="profile-photo-sm">
+                                <img src="@Model.GetProfilePicture(tuple.Item2)" alt="" class="profile-photo-sm">
                                 <p><a href="timeline.html" class="profile-link" style="text-decoration: none;">@Model.GetEmailForPost(tuple.Item2)</a><i class="em em-laughing"></i> @tuple.Item1</p>
                             </div>
                         }
                         <form method="post" asp-page-handler="Comment">
                             <div class="post-comment">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="profile-photo-sm">
+                                <img src="@Model.GetProfilePicture(Model.GetSessionUserId())" alt="" class="profile-photo-sm">
                                 <input asp-for="CommentText" type="text" class="form-control" placeholder="Post a comment">
                                 <input asp-for="PostId" type="hidden" value="@item.Id" />
                                 <button type="submit" class="btn btn-primary ms-auto">Post</button>
