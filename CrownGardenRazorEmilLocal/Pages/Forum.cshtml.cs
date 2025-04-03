@@ -3,6 +3,7 @@ using CrownGardenRazorEmilLocal.Datas;
 using CrownGardenRazorEmilLocal.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace CrownGardenRazorEmilLocal.Pages
 {
@@ -207,6 +208,34 @@ namespace CrownGardenRazorEmilLocal.Pages
             {
                 await PostPictures[PostPictures.Count - 1].CopyToAsync(stream);
             }
+        }
+
+        public IActionResult OnPostDelete()
+        {
+            PostModel postModel = _appDbContext.Posts.Find(PostId);
+            _appDbContext.Posts.Remove(postModel);
+
+            List<PostLikeModel> postLikes = _appDbContext.PostLikes.Where(postLike => postLike.PostId == PostId).ToList();
+            postLikes.ForEach(postlike => _appDbContext.PostLikes.Remove(postlike));
+
+            List<PostCommentLinkModel> postCommentLinks = _appDbContext.PostCommentLinks.Where(postCLink => postCLink.PostId == PostId).ToList();
+            postCommentLinks.ForEach(postCLink =>
+            {
+                CommentModel commentModel = _appDbContext.Comments.Find(postCLink.CommentId);
+                _appDbContext.Comments.Remove(commentModel);
+            });
+
+            postCommentLinks.ForEach(postClink => _appDbContext.PostCommentLinks.Remove(postClink));
+
+            _appDbContext.SaveChanges();
+
+            return RedirectToPage();
+
+        }
+
+        public bool PostUserIdIsLoggedInUser(string userId)
+        {
+            return userId == GetSessionUserId();
         }
         public string GetEmailForPost(string UserId)
         {

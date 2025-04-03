@@ -44,6 +44,13 @@
                             <h5><a href="timeline.html" class="profile-link" style="text-decoration: none;">@Model.GetEmailForPost(item.UserId)</a> <span class="following">following</span></h5>
                             <p class="text-muted">Published a photo on @item.PostDate.ToString()</p>
                         </div>
+                        <form method="post" asp-page-handler="Delete">
+                            @if (Model.PostUserIdIsLoggedInUser(item.UserId))
+                            {
+                                <input asp-for="PostId" type="hidden" value="@item.Id" />
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            }
+                        </form>
                         <form method="post" asp-page-handler="Like">
                             <div class="reaction">
                                 <input asp-for="PostId" type="hidden" value="@item.Id" />
